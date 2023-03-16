@@ -1,5 +1,6 @@
 package com.wen.xgr.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wen.xgr.annotation.XmlField;
 import com.wen.xgr.annotation.XmlHead;
 import com.wen.xgr.inter.IHandleAttr;
@@ -26,6 +27,8 @@ public class XGRUtil<T> {
 
     private Document doc;
 
+    private JSONObject userData;
+
     private T obj;
     private List<Object[]> fieldList = new ArrayList<>();
 
@@ -35,6 +38,10 @@ public class XGRUtil<T> {
         this.doc = DocumentHelper.createDocument();
         // 解析注解
         init();
+    }
+
+    public void setUserData(JSONObject userData){
+        this.userData = userData;
     }
 
     private void init(){
@@ -175,7 +182,7 @@ public class XGRUtil<T> {
         Map<String, String> attrs = new HashMap<>();
         try {
             IHandleAttr iHandleAttr = (IHandleAttr) attrHandler.newInstance();
-            attrs = iHandleAttr.handleAttr(ele, this.obj);
+            attrs = iHandleAttr.handleAttr(ele, this.obj, this.userData);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

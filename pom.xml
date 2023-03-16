@@ -11,6 +11,7 @@
     <properties>
         <dom4j.version>1.6.1</dom4j.version>
         <common.lang3.verion>3.1</common.lang3.verion>
+        <fastjson.version>1.2.70</fastjson.version>
     </properties>
 
     <dependencies>
@@ -24,6 +25,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${common.lang3.verion}</version>
+        </dependency>
+
+        <!-- fastJson 解析json字符串-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
 
     </dependencies>
