@@ -367,24 +367,40 @@ public class XGRUtil<T> {
     }
 
     private void fillListField(String fieldName, Object entity, Element element) {
-        if (element.elements().size() > 0) {
-            try {
-                List list = new ArrayList();
-                Iterator iterator = element.elements().iterator();
-                // 由list类型对象获取元素的类型
-                Class<?> clazz = ReflectUtil.getClassTypeForName(entity, fieldName);
-                Object subEntity = clazz.newInstance();
-                if (iterator.hasNext()) {
-                    Element subEle = (Element) iterator.next();
-                    XGRUtil subUtil = new XGRUtil(clazz);
-                    subUtil.getObj(subEntity, subEle);
-                    list.add(subEntity);
+        try {
+            List list = new ArrayList();
+            // 由list类型对象获取元素的类型  todo 不支持 List<Map<String,String>>
+            Class<?> clazz = ReflectUtil.getClassTypeForName(entity, fieldName);
+            if (clazz == null) {
+                // map
+                for (Object o : element.elements()) {
+                    Element subEle = (Element) o;
+                    Map map = new HashMap();
+                    String name = subEle.getName();
+                    String text = subEle.getText();
+                    map.put(name, text);
+                    list.add(map);
                 }
-                ReflectUtil.reflectSetObjectValue(fieldName, list, entity);
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("反射获取对象失败" + e);
+            }else {
+                if (determineNormalFiled(clazz)) {
+                    if (StringUtils.isNotEmpty(element.getText())) {
+                        list = Arrays.asList(element.getText().split(","));
+                    }
+                }else {
+                    Object subEntity = clazz.newInstance();
+                    Iterator iterator = element.elements().iterator();
+                    if (iterator.hasNext()) {
+                        Element subEle = (Element) iterator.next();
+                        XGRUtil subUtil = new XGRUtil(clazz);
+                        subUtil.getObj(subEntity, subEle);
+                        list.add(subEntity);
+                    }
+                }
             }
+            ReflectUtil.reflectSetObjectValue(fieldName, list, entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("反射获取对象失败" + e);
         }
     }
 

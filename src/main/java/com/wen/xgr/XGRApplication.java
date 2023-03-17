@@ -21,12 +21,23 @@ public class XGRApplication {
         Map<String, String> map = new HashMap<>();
         map.put("abc", "123");
         user.setMap(map);
+        Map<String, String> listmap1 = new HashMap<>();
+        listmap1.put("name", "tom");
+        Map<String, String> listmap2 = new HashMap<>();
+        listmap2.put("age", "12");
+        user.getListmap().add(listmap1);
+        user.getListmap().add(listmap2);
         user.setBirthday(new Date());
-        XGRUtil<User> util = new XGRUtil<>(User.class);
-        String xml = util.convertXML(user);
+        XGRUtil<User> util1 = new XGRUtil<>(User.class);
+        String xml = util1.convertXML(user);
         System.out.println(xml);
-        User newUser = util.convertObj(xml);
+        XGRUtil<User> util2 = new XGRUtil<>(User.class);
+        User newUser = util2.convertObj(xml);
         System.out.println(newUser);
+
+        XGRUtil<User> util3 = new XGRUtil<>(User.class);
+        String s = util3.convertXML(newUser);
+        System.out.println(s);
     }
 
 }

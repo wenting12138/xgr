@@ -29,11 +29,22 @@ public class User {
     @XmlField(value = "map")
     private Map<String, String> map;
 
+    @XmlField(value = "listmap")
+    private List<Map<String, String>> listmap = new ArrayList<>();
+
     @XmlField(value = "orgNoList")
     private List<String> orgNoList = new ArrayList<>();
 
     public List<String> getOrgNoList() {
         return orgNoList;
+    }
+
+    public List<Map<String, String>> getListmap() {
+        return listmap;
+    }
+
+    public void setListmap(List<Map<String, String>> listmap) {
+        this.listmap = listmap;
     }
 
     public void setOrgNoList(List<String> orgNoList) {
@@ -115,6 +126,8 @@ public class User {
                 ", birthday=" + birthday +
                 ", friend=" + friend +
                 ", map=" + map +
+                ", listmap=" + listmap +
+                ", orgNoList=" + orgNoList +
                 '}';
     }
 }

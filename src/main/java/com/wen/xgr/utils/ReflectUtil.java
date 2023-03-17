@@ -1,5 +1,6 @@
 package com.wen.xgr.utils;
 
+import cn.hutool.core.lang.ParameterizedTypeImpl;
 import cn.hutool.core.util.ArrayUtil;
 import com.alibaba.fastjson.JSON;
 import com.wen.xgr.annotation.XmlField;
@@ -20,7 +21,11 @@ public class ReflectUtil {
         if(genericType instanceof ParameterizedType){
             ParameterizedType pt = (ParameterizedType) genericType;
             //得到泛型里的class类型对象
-            clazz = (Class<?>)pt.getActualTypeArguments()[0];
+            if (pt.getActualTypeArguments()[0] instanceof sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl) {
+
+            }else {
+                clazz = (Class<?>)pt.getActualTypeArguments()[0];
+            }
         }
         return clazz;
     }
