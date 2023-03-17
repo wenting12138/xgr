@@ -7,5 +7,5 @@
         System.out.println(util.convertXML(user));
 ## xml转java对象
         XGRUtil<User> util3 = new XGRUtil<>(User.class);
-        String s = util3.convertObj(newUser);
-        System.out.println(xml);
+        User newUser = util3.convertObj(xml);
+        System.out.println(newUser);
