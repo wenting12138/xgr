@@ -3,8 +3,10 @@ package com.wen.xgr.domian;
 import com.wen.xgr.annotation.XmlField;
 import com.wen.xgr.annotation.XmlHead;
 
+import java.io.Serializable;
+
 @XmlHead(value = "dept")
-public class Dept {
+public class Dept implements Serializable {
 
     @XmlField(value = "deptId")
     private String deptId;
