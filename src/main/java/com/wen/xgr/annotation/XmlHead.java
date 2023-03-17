@@ -15,4 +15,7 @@ public @interface XmlHead {
 
     Class<?> attr() default DefaultHandleAttr.class;
 
+    boolean isToXml() default true;
+
+    boolean isToObj() default true;
 }

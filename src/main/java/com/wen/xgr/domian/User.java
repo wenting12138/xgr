@@ -18,20 +18,35 @@ public class User {
     private Integer age;
 
     @XmlField("dept")
-    private Dept dept = new Dept("1", "研发部");
+    private Dept dept;
 
     @XmlField(value = "birthday", dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date birthday;
 
-    @XmlField("friend")
+    @XmlField(value = "friend")
     private List<User> friend = new ArrayList<>();
 
-    @XmlField("map")
-    private Map<String, String> map = new HashMap(){
-        {
-            put("123", "456");
-        }
-    };
+    @XmlField(value = "map")
+    private Map<String, String> map;
+
+    @XmlField(value = "orgNoList")
+    private List<String> orgNoList = new ArrayList<>();
+
+    public List<String> getOrgNoList() {
+        return orgNoList;
+    }
+
+    public void setOrgNoList(List<String> orgNoList) {
+        this.orgNoList = orgNoList;
+    }
+
+    public Map<String, String> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, String> map) {
+        this.map = map;
+    }
 
     public User() {
     }
@@ -88,5 +103,18 @@ public class User {
 
     public void setFriend(List<User> friend) {
         this.friend = friend;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", dept=" + dept +
+                ", birthday=" + birthday +
+                ", friend=" + friend +
+                ", map=" + map +
+                '}';
     }
 }

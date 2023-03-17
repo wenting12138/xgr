@@ -1,6 +1,6 @@
 package com.wen.xgr.annotation;
 
-public class XmlAttr {
+public @interface XmlAttr {
 
 
 

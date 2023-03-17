@@ -12,6 +12,7 @@
         <dom4j.version>1.6.1</dom4j.version>
         <common.lang3.verion>3.1</common.lang3.verion>
         <fastjson.version>1.2.70</fastjson.version>
+        <hutols.version>5.5.8</hutols.version>
     </properties>
 
     <dependencies>
@@ -32,6 +33,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutols.version}</version>
         </dependency>
 
     </dependencies>
