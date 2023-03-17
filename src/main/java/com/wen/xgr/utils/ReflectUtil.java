@@ -39,7 +39,7 @@ public class ReflectUtil {
      *  通过反射set column的值
      */
     public static boolean reflectSetObjectValue(String fieldName, Object value ,Object obj){
-        // 通过反射查询 set TObdTaskData.fieldName的value
+        // 通过反射查询 set fieldName的value
         Method[] methods = obj.getClass().getMethods();
         Method curMethod = null;
         for (Method method : methods) {
