@@ -373,6 +373,7 @@ public class XGRUtil<T> {
             Class<?> clazz = ReflectUtil.getClassTypeForName(entity, fieldName);
             if (clazz == null) {
                 // map
+                System.out.println(element.elements().size());
                 for (Object o : element.elements()) {
                     Element subEle = (Element) o;
                     Map map = new HashMap();
@@ -387,9 +388,10 @@ public class XGRUtil<T> {
                         list = Arrays.asList(element.getText().split(","));
                     }
                 }else {
-                    Object subEntity = clazz.newInstance();
+                    System.out.println(element.elements().size());
                     Iterator iterator = element.elements().iterator();
-                    if (iterator.hasNext()) {
+                    while (iterator.hasNext()) {
+                        Object subEntity = clazz.newInstance();
                         Element subEle = (Element) iterator.next();
                         XGRUtil subUtil = new XGRUtil(clazz);
                         subUtil.getObj(subEntity, subEle);
