@@ -6,10 +6,7 @@ import com.wen.xgr.annotation.XmlHead;
 import com.wen.xgr.exception.XGRException;
 import com.wen.xgr.inter.IHandleAttr;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
@@ -25,6 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class XGRUtil<T> {
+
+    public static final String headerAttrFieldName = "headerAttrs";
+    public static final String fieldsAttrFieldName = "fieldsAttrs";
 
     private Class<T> resolverClazz;
 
@@ -84,20 +84,20 @@ public class XGRUtil<T> {
     }
 
     private Element getRoot(Element element, T obj, boolean flag) throws Exception {
-        handlerAttr(element, this.headAttr);
+        handlerAttr(element, headerAttrFieldName, obj);
         for (Object[] objects : this.convertXmlfieldList) {
             Field field = (Field) objects[0];
             XmlField xmlField = (XmlField) objects[1];
             field.setAccessible(true);
             Object val = field.get(obj);
-            generateRootNodeXmlDoc(element, val, xmlField);
+            generateRootNodeXmlDoc(element, val, xmlField, obj);
         }
         return element;
     }
 
-    private Element generateRootNodeXmlDoc(Element ele, Object val, XmlField xmlField) throws Exception {
+    private Element generateRootNodeXmlDoc(Element ele, Object val, XmlField xmlField, T obj) throws Exception {
         Element element = ele.addElement(xmlField.value());
-        handlerAttr(element, xmlField.attr());
+        handlerAttr(element, fieldsAttrFieldName, obj);
         handleType(element, val, xmlField);
         return element;
     }
@@ -206,25 +206,31 @@ public class XGRUtil<T> {
             ele.addText(String.valueOf(val));
         }
         // 处理属性
-        if (xmlField != null) {
-            handlerAttr(ele, xmlField.attr());
-        }
+//        if (xmlField != null) {
+//            handlerAttr(ele, xmlField.attr());
+//        }
     }
 
-    private void handlerAttr(Element ele, Class<?> attrHandler) {
-        if (attrHandler == null) {
-            return;
-        }
+    private void handlerAttr(Element ele, String attrFieldName, T obj) {
         Map<String, String> attrs = new HashMap<>();
-        try {
-            IHandleAttr iHandleAttr = (IHandleAttr) attrHandler.newInstance();
-            attrs = iHandleAttr.handleAttr(ele, this.obj, this.userData);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        if (headerAttrFieldName.equals(attrFieldName)) {
+            Object o = ReflectUtil.reflectGetObjectValue(attrFieldName, obj);
+            if (o != null) {
+                attrs = (Map<String, String>) o;
+            }
         }
-        for (String key : attrs.keySet()) {
-            String value = attrs.get(key);
-            ele.addAttribute(key, value);
+        if (fieldsAttrFieldName.equals(attrFieldName)) {
+            Object o = ReflectUtil.reflectGetObjectValue(attrFieldName, obj);
+            if (o != null) {
+                Map<String, Map<String, String>> attrsMap = (Map<String, Map<String, String>>) o;
+                attrs = attrsMap.get(ele.getName());
+            }
+        }
+        if (attrs != null) {
+            for (String key : attrs.keySet()) {
+                String value = attrs.get(key);
+                ele.addAttribute(key, value);
+            }
         }
     }
 
@@ -283,7 +289,40 @@ public class XGRUtil<T> {
     }
 
     private void getObj(Object entity, Element rootElement) {
+        fillAttrs(entity, headerAttrFieldName, rootElement);
         fillEntity(entity, rootElement);
+    }
+
+    private void fillAttrs(Object entity, String attrFieldName, Element rootElement) {
+        if (headerAttrFieldName.equals(attrFieldName)) {
+            Map<String, String> attrs = new HashMap<>();
+            List<Attribute> attributes = rootElement.attributes();
+            if (attributes.size() > 0) {
+                for (Attribute attribute : attributes) {
+                    attrs.put(attribute.getName(), attribute.getValue());
+                }
+            }
+            ReflectUtil.reflectSetObjectValue(attrFieldName, attrs, entity);
+        }
+        if (fieldsAttrFieldName.equals(attrFieldName)) {
+            Map<String, Map<String, String>> mapAttrs = new HashMap<>();
+            Object o = ReflectUtil.reflectGetObjectValue(attrFieldName, entity);
+            if (o != null) {
+                mapAttrs = (Map<String, Map<String, String>>) o;
+            }
+            Map<String, String> map = mapAttrs.get(rootElement.getName());
+            if (map == null) {
+                map = new HashMap<>();
+            }
+            List<Attribute> attributes = rootElement.attributes();
+            if (attributes.size() > 0) {
+                for (Attribute attribute : attributes) {
+                    map.put(attribute.getName(), attribute.getValue());
+                }
+                mapAttrs.put(rootElement.getName(), map);
+            }
+            ReflectUtil.reflectSetObjectValue(attrFieldName, mapAttrs, entity);
+        }
     }
 
     private void fillEntity(Object entity, Element rootElement) {
@@ -297,6 +336,7 @@ public class XGRUtil<T> {
     private void fillField(String fieldName, Class<?> type, String id, Object entity, Element rootElement, XmlField xmlField) {
         Element element = rootElement.element(id);
         if (element != null) {
+            fillAttrs(entity, fieldsAttrFieldName, element);
             if (determineNormalFiled(type)) {
                 // 基本数据类型处理
                 fillNormalField(fieldName, type, id, entity, element, xmlField);

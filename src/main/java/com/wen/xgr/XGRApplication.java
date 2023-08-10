@@ -76,11 +76,11 @@ public class XGRApplication {
 //        System.out.println(util2.convertXML(ks));
 
         String xmls =
-                "<ORDER>" +
-                        "<servicecode>CMS101</servicecode>" +
+                "<ORDER abc='123'>" +
+                        "<servicecode qwe='456'>CMS101</servicecode>" +
                         "<source></source>" +
                         "<target>5040204</target>" +
-                        "<data> " +
+                        "<data def='678'> " +
                         "   <msgId>PRSS_powerInfoInterFace_579b0318-8bd6-437f-b2f1-6df4c964e32b</msgId> " +
                         "   <poweroffId>5040220230720002</poweroffId> " +
                         "   <cmsid>5040220230720002</cmsid> " +

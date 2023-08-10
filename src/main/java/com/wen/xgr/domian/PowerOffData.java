@@ -6,6 +6,7 @@ import com.wen.xgr.annotation.XmlHead;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 @XmlHead("datalist")
 public class PowerOffData implements Serializable {
@@ -35,6 +36,8 @@ public class PowerOffData implements Serializable {
 	@XmlField("lineId")
 	private String lineId;
 
+	private Map<String, String> headerAttrs;
+
 	@Override
 	public String toString() {
 		return "PowerOffData{" +
@@ -43,7 +46,16 @@ public class PowerOffData implements Serializable {
 				", stationName='" + stationName + '\'' +
 				", lineName='" + lineName + '\'' +
 				", lineId='" + lineId + '\'' +
+				", headerAttrs=" + headerAttrs +
 				'}';
+	}
+
+	public Map<String, String> getHeaderAttrs() {
+		return headerAttrs;
+	}
+
+	public void setHeaderAttrs(Map<String, String> headerAttrs) {
+		this.headerAttrs = headerAttrs;
 	}
 
 	public String getTgId() {

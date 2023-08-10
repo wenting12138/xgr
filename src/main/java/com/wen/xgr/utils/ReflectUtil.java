@@ -86,6 +86,28 @@ public class ReflectUtil {
         return true;
     }
 
+    public static Object reflectGetObjectValue(String fieldName ,Object obj){
+        // 通过反射查询 set fieldName的value
+        Method[] methods = obj.getClass().getMethods();
+        Method curMethod = null;
+        for (Method method : methods) {
+            String s = fieldName.substring(0, 1).toUpperCase();
+            s = s + fieldName.substring(1);
+            if (("get" + s).equals(method.getName())) {
+                curMethod = method;
+                break;
+            }
+        }
+        if (curMethod != null) {
+            try {
+                return curMethod.invoke(obj);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return null;
+    }
+
     public static boolean isDate(Object timestamp) {
         try {
             if (("" + timestamp).length() != 13) {
