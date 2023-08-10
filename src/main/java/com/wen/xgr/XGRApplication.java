@@ -1,9 +1,6 @@
 package com.wen.xgr;
 
-import com.wen.xgr.domian.Dept;
-import com.wen.xgr.domian.KS;
-import com.wen.xgr.domian.KsMain;
-import com.wen.xgr.domian.User;
+import com.wen.xgr.domian.*;
 import com.wen.xgr.utils.XGRUtil;
 
 import java.util.Date;
@@ -14,32 +11,32 @@ public class XGRApplication {
 
     public static void main(String[] args) throws Exception {
 
-        User user = new User("1", "张三", 18);
-        user.getFriend().add(new User("2", "李四", 20));
-        user.setDept(new Dept("3", "研发部"));
-        user.getOrgNoList().add("admin");
-        user.getOrgNoList().add("manager");
-        user.getOrgNoList().add("worker");
-        Map<String, String> map = new HashMap<>();
-        map.put("abc", "123");
-        user.setMap(map);
-        Map<String, String> listmap1 = new HashMap<>();
-        listmap1.put("name", "tom");
-        Map<String, String> listmap2 = new HashMap<>();
-        listmap2.put("age", "12");
-        user.getListmap().add(listmap1);
-        user.getListmap().add(listmap2);
-        user.setBirthday(new Date());
-        XGRUtil<User> util1 = new XGRUtil<>(User.class);
-        String xml = util1.convertXML(user);
-        System.out.println(xml);
-        XGRUtil<User> util2 = new XGRUtil<>(User.class);
-        User newUser = util2.convertObj(xml);
-        System.out.println(newUser);
-
-        XGRUtil<User> util3 = new XGRUtil<>(User.class);
-        String s = util3.convertXML(newUser);
-        System.out.println(s);
+//        User user = new User("1", "张三", 18);
+//        user.getFriend().add(new User("2", "李四", 20));
+//        user.setDept(new Dept("3", "研发部"));
+//        user.getOrgNoList().add("admin");
+//        user.getOrgNoList().add("manager");
+//        user.getOrgNoList().add("worker");
+//        Map<String, String> map = new HashMap<>();
+//        map.put("abc", "123");
+//        user.setMap(map);
+//        Map<String, String> listmap1 = new HashMap<>();
+//        listmap1.put("name", "tom");
+//        Map<String, String> listmap2 = new HashMap<>();
+//        listmap2.put("age", "12");
+//        user.getListmap().add(listmap1);
+//        user.getListmap().add(listmap2);
+//        user.setBirthday(new Date());
+//        XGRUtil<User> util1 = new XGRUtil<>(User.class);
+//        String xml = util1.convertXML(user);
+//        System.out.println(xml);
+//        XGRUtil<User> util2 = new XGRUtil<>(User.class);
+//        User newUser = util2.convertObj(xml);
+//        System.out.println(newUser);
+//
+//        XGRUtil<User> util3 = new XGRUtil<>(User.class);
+//        String s = util3.convertXML(newUser);
+//        System.out.println(s);
 //        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 //                "<ESB>\n" +
 //                "\t<DATA>\n" +
@@ -77,6 +74,63 @@ public class XGRApplication {
 //
 //        XGRUtil<KsMain> util2 = new XGRUtil<>(KsMain.class);
 //        System.out.println(util2.convertXML(ks));
+
+        String xmls =
+                "<ORDER>" +
+                        "<servicecode>CMS101</servicecode>" +
+                        "<source></source>" +
+                        "<target>5040204</target>" +
+                        "<data> " +
+                        "   <msgId>PRSS_powerInfoInterFace_579b0318-8bd6-437f-b2f1-6df4c964e32b</msgId> " +
+                        "   <poweroffId>5040220230720002</poweroffId> " +
+                        "   <cmsid>5040220230720002</cmsid> " +
+                        "   <startTime>2023-07-20 14:22:46</startTime> " +
+                        "   <stopDate>2023-07-20 16:22:53</stopDate> " +
+                        "   <orgNo>5040204</orgNo> " +
+                        "   <typeCode>02</typeCode> " +
+                        "   <poweroffReason>测试测试</poweroffReason> " +
+                        "   <powerType>03</powerType> " +
+                        "   <importantConsComm>无</importantConsComm> " +
+                        "   <chgTypeCode>00</chgTypeCode> " +
+                        "   <changedCause></changedCause> " +
+                        "   <empNo></empNo> " +
+                        "   <collTime>2023-07-20 14:24:17</collTime> " +
+                        "   <issueChannel>IVR、95598网站、网上国网</issueChannel> " +
+                        "   <areaDesc>重庆市【高新区】1、石桥铺（科园二路、科园三路）；【九龙坡区】：1、石桥铺（石新路）；2、杨家坪（坪正街）</areaDesc> " +
+                        "   <powerOffArea>变电站名称:110kV陈家坪变电站;线路名称:10kV陈西一616;台区名称:10kV昭华箱式变电站、10kV富有大厦配电室1#变</powerOffArea> " +
+                        "   <voltCode></voltCode>" +
+                        "   <dayNightFlag>0</dayNightFlag> " +
+                        "   <dayStop></dayStop> " +
+                        "   <nightSend></nightSend> " +
+                        "   <datalists> " +
+                        "       <datalist> " +
+                        "           <tgId>2014062710370169</tgId> " +
+                        "           <tgName>电网_10kV昭华箱式变电站</tgName> " +
+                        "           <stationName>电网_110kV陈家坪变电站</stationName> " +
+                        "           <lineName>电网_10kV陈西一616</lineName> " +
+                        "           <lineId>2014062710438049</lineId> " +
+                        "       </datalist> " +
+                        "       <datalist> " +
+                        "           <tgId>2014062710359185</tgId> " +
+                        "           <tgName>电网_10kV富有大厦配电室1#变</tgName> " +
+                        "           <stationName>电网_110kV陈家坪变电站</stationName> " +
+                        "           <lineName>电网_10kV陈西一616</lineName> " +
+                        "           <lineId>2014062710438049</lineId> " +
+                        "       </datalist> " +
+                        "   </datalists>" +
+                        "</data>" +
+                "</ORDER>";
+
+        XGRUtil<PowerOrder> xgrUtil = new XGRUtil<>(PowerOrder.class);
+        PowerOrder powerOrder = xgrUtil.convertObj(xmls);
+        System.out.println(powerOrder);
+        System.out.println(powerOrder.getPowerOff());
+//        System.out.println(powerOrder.getPowerOff().getPowerOffDataList());
+
+        XGRUtil<PowerOrder> xgrUtil2 = new XGRUtil<>(PowerOrder.class);
+        String s = xgrUtil2.convertXML(powerOrder);
+        System.out.println(s);
+
     }
 
 }
