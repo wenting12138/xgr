@@ -1,7 +1,5 @@
 package com.wen.xgr.annotation;
 
-import com.wen.xgr.inter.DefaultHandleAttr;
-
 import java.lang.annotation.*;
 
 @Documented
@@ -14,8 +12,6 @@ public @interface XmlField {
     int sort() default 0;
 
     String dateFormat() default "";
-
-    Class<?> attr() default DefaultHandleAttr.class;
 
     boolean isToXml() default true;
 

@@ -4,20 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.wen.xgr.annotation.XmlField;
 import com.wen.xgr.annotation.XmlHead;
 import com.wen.xgr.exception.XGRException;
-import com.wen.xgr.inter.IHandleAttr;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -30,7 +25,6 @@ public class XGRUtil<T> {
 
     private String headLabel;
     private boolean headIsToXML;
-    private Class<?> headAttr;
 
     private Document doc;
 
@@ -66,7 +60,6 @@ public class XGRUtil<T> {
         XmlHead xmlHead = this.resolverClazz.getAnnotation(XmlHead.class);
         this.headIsToXML = xmlHead.isToXml();
         this.headLabel = xmlHead.value();
-        this.headAttr = xmlHead.attr();
     }
 
 
@@ -205,10 +198,6 @@ public class XGRUtil<T> {
         } else {
             ele.addText(String.valueOf(val));
         }
-        // 处理属性
-//        if (xmlField != null) {
-//            handlerAttr(ele, xmlField.attr());
-//        }
     }
 
     private void handlerAttr(Element ele, String attrFieldName, T obj) {
