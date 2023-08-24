@@ -2,15 +2,13 @@ package com.wen.xgr.domian.flow;
 
 import com.wen.xgr.annotation.XmlHead;
 import com.wen.xgr.utils.Attributes;
+import lombok.Data;
+import lombok.ToString;
 
 @XmlHead(value = "branch")
-public class Branch extends Attributes {
+@Data
+@ToString
+public class Branch{
 
-    @Override
-    public String toString() {
-        return "Branch{" +
-                "headerAttrs=" + headerAttrs +
-                ", fieldsAttrs=" + fieldsAttrs +
-                '}';
-    }
+
 }

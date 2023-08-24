@@ -2,15 +2,13 @@ package com.wen.xgr.domian.flow;
 
 import com.wen.xgr.annotation.XmlHead;
 import com.wen.xgr.utils.Attributes;
+import lombok.Data;
+import lombok.ToString;
 
 @XmlHead(value = "responseHandle")
-public class ResponseHandle extends Attributes {
+@Data
+@ToString
+public class ResponseHandle {
 
-    @Override
-    public String toString() {
-        return "ResponseHandle{" +
-                "headerAttrs=" + headerAttrs +
-                ", fieldsAttrs=" + fieldsAttrs +
-                '}';
-    }
+
 }

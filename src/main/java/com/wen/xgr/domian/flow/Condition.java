@@ -1,16 +1,17 @@
 package com.wen.xgr.domian.flow;
 
+import com.wen.xgr.annotation.XmlAttribute;
 import com.wen.xgr.annotation.XmlHead;
 import com.wen.xgr.utils.Attributes;
+import lombok.Data;
+import lombok.ToString;
 
 @XmlHead(value = "condition")
-public class Condition extends Attributes {
+@Data
+@ToString
+public class Condition{
 
-    @Override
-    public String toString() {
-        return "Condition{" +
-                "headerAttrs=" + headerAttrs +
-                ", fieldsAttrs=" + fieldsAttrs +
-                '}';
-    }
+    @XmlAttribute("needReport")
+    private String needReport;
+
 }

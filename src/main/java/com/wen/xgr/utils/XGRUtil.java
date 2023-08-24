@@ -1,8 +1,10 @@
 package com.wen.xgr.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wen.xgr.annotation.XmlAttribute;
 import com.wen.xgr.annotation.XmlField;
 import com.wen.xgr.annotation.XmlHead;
+import com.wen.xgr.annotation.XmlOrder;
 import com.wen.xgr.exception.XGRException;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
@@ -15,6 +17,7 @@ import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class XGRUtil<T> {
 
@@ -35,6 +38,8 @@ public class XGRUtil<T> {
 
     private List<Object[]> convertObjFieldList = new ArrayList<>();
 
+    private Map<String, Object[]> attributeMap = new LinkedHashMap<>();
+
     public XGRUtil(Class<T> resolverClazz) {
         this.resolverClazz = resolverClazz;
         // 初始化文档
@@ -49,12 +54,23 @@ public class XGRUtil<T> {
 
     private void init(){
         // 解析注解
-        for (Field field : this.resolverClazz.getDeclaredFields()) {
+        List<Field> list = Arrays.stream(this.resolverClazz.getDeclaredFields()).sorted((a, b) -> {
+            XmlOrder aannotation = a.getAnnotation(XmlOrder.class);
+            XmlOrder bannotation = b.getAnnotation(XmlOrder.class);
+            if (aannotation == null || bannotation == null) {
+                return 0;
+            }
+            return aannotation.value() - bannotation.value();
+        }).collect(Collectors.toList());
+        for (Field field : list) {
             if (field.isAnnotationPresent(XmlField.class) && field.getAnnotation(XmlField.class).isToXml()) {
                 convertXmlfieldList.add(new Object[]{field, field.getAnnotation(XmlField.class)});
             }
             if (field.isAnnotationPresent(XmlField.class) && field.getAnnotation(XmlField.class).isToObj()) {
                 convertObjFieldList.add(new Object[]{field, field.getAnnotation(XmlField.class)});
+            }
+            if (field.isAnnotationPresent(XmlAttribute.class)) {
+                attributeMap.put(field.getAnnotation(XmlAttribute.class).value(), new Object[]{field, field.getAnnotation(XmlAttribute.class)});
             }
         }
         XmlHead xmlHead = this.resolverClazz.getAnnotation(XmlHead.class);
@@ -201,11 +217,18 @@ public class XGRUtil<T> {
     }
 
     private void handlerAttr(Element ele, String attrFieldName, T obj) {
-        Map<String, String> attrs = new HashMap<>();
+        Map<String, String> attrs = new LinkedHashMap<>();
         if (headerAttrFieldName.equals(attrFieldName)) {
             Object o = ReflectUtil.reflectGetObjectValue(attrFieldName, obj);
             if (o != null) {
                 attrs = (Map<String, String>) o;
+            }
+            for (String key : attributeMap.keySet()) {
+                Object[] value = attributeMap.get(key);
+                Field field = (Field) value[0];
+                XmlAttribute xmlAttribute = (XmlAttribute) value[1];
+                Object val = ReflectUtil.reflectGetObjectValue(field.getName(), obj);
+                attrs.put(xmlAttribute.value(), String.valueOf(val));
             }
         }
         if (fieldsAttrFieldName.equals(attrFieldName)) {
@@ -289,9 +312,16 @@ public class XGRUtil<T> {
             if (attributes.size() > 0) {
                 for (Attribute attribute : attributes) {
                     attrs.put(attribute.getName(), attribute.getValue());
+
+                    Object[] objects = attributeMap.get(attribute.getName());
+                    if (objects != null) {
+                        Field field = (Field) objects[0];
+                        ReflectUtil.reflectSetObjectValue(field.getName(), attribute.getValue(), entity);
+                    }
                 }
             }
             ReflectUtil.reflectSetObjectValue(attrFieldName, attrs, entity);
+
         }
         if (fieldsAttrFieldName.equals(attrFieldName)) {
             Map<String, Map<String, String>> mapAttrs = new HashMap<>();

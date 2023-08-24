@@ -1,31 +1,38 @@
 package com.wen.xgr.domian.flow;
 
+import com.wen.xgr.annotation.XmlAttribute;
 import com.wen.xgr.annotation.XmlField;
 import com.wen.xgr.annotation.XmlHead;
-import com.wen.xgr.utils.Attributes;
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
 @XmlHead(value = "IVRFlow")
-public class IvrFlow extends Attributes {
+@Data
+@ToString
+public class IvrFlow {
+    @XmlAttribute("ivrFlowID")
+    private String ivrFlowId;
+    @XmlAttribute("autoRecord")
+    private String autoRecord;
+    @XmlAttribute("ttsEngine")
+    private String ttsEngine;
+    @XmlAttribute("ttsVoiceName")
+    private String ttsVoiceName;
+    @XmlAttribute("asrEngine")
+    private String asrEngine;
+    @XmlAttribute("asrGrammar")
+    private String asrGrammar;
+    @XmlAttribute("startMenu")
+    private String startMenu;
+    @XmlAttribute("endMenu")
+    private String endMenu;
+    @XmlAttribute("exitMenu")
+    private String exitMenu;
 
+    @XmlField("XBaselogUserData")
+    private XBaselogUserData xBaselogUserData;
     @XmlField("menus")
-    private List<Menu> menuList;
-
-    @Override
-    public String toString() {
-        return "IvrFlow{" +
-                "menuList=" + menuList +
-                ", headerAttrs=" + headerAttrs +
-                ", fieldsAttrs=" + fieldsAttrs +
-                '}';
-    }
-
-    public List<Menu> getMenuList() {
-        return menuList;
-    }
-
-    public void setMenuList(List<Menu> menuList) {
-        this.menuList = menuList;
-    }
+    private List<BaseMenu> baseMenuList;
 }
