@@ -47,6 +47,13 @@
             <version>1.18.28</version>
         </dependency>
 
+        <!-- 这里对Calcite适配依赖进行封装，引入下列包即可 -->
+        <dependency>
+            <groupId>org.smartloli</groupId>
+            <artifactId>jsql-client</artifactId>
+            <version>1.0.0</version>
+          </dependency>
+
     </dependencies>
 
 </project>
