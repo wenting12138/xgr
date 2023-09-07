@@ -54,7 +54,8 @@ public class XGRUtil<T> {
 
     private void init(){
         // 解析注解
-        List<Field> list = Arrays.stream(this.resolverClazz.getDeclaredFields()).sorted((a, b) -> {
+        List<Field> fields = ReflectUtil.getDeclaredFields(this.resolverClazz);
+        List<Field> list = fields.stream().sorted((a, b) -> {
             XmlOrder aannotation = a.getAnnotation(XmlOrder.class);
             XmlOrder bannotation = b.getAnnotation(XmlOrder.class);
             if (aannotation == null || bannotation == null) {
@@ -361,40 +362,48 @@ public class XGRUtil<T> {
                 fillNormalField(fieldName, type, id, entity, element, xmlField);
             }else if (determineCollectFiled(type)) {
                 // 集合数据类型处理
-                fillCollectField(fieldName, id, entity, element);
+                fillCollectField(fieldName, id, entity, element, xmlField);
             }else {
                 // 对象数据类型处理
-                fillObjectField(fieldName, id, entity, element);
+                fillObjectField(fieldName, id, entity, element, xmlField);
             }
         }
     }
 
-    private void fillCollectField(String fieldName, String eleId, Object entity, Element element) {
+    private void fillCollectField(String fieldName, String eleId, Object entity, Element element, XmlField xmlField) {
         try {
-            Class<?> type = entity.getClass().getDeclaredField(fieldName).getType();
+            Class<?> type = ReflectUtil.getDeclaredField(entity, fieldName).getType();
             if (type == List.class) {
-                fillListField(fieldName, entity, element);
+                fillListField(fieldName, entity, element, xmlField);
             } else if (type == Map.class){
                 fillMapField(fieldName, entity, element);
             }else if (type == Set.class) {
-                fillSetField(fieldName, entity, element);
+                fillSetField(fieldName, entity, element, xmlField);
             }
         } catch (Exception e) {
             System.out.println("获取失败");
         }
     }
 
-    private void fillSetField(String fieldName, Object entity, Element element) {
+    private void fillSetField(String fieldName, Object entity, Element element, XmlField xmlField) {
         if (element.elements().size() > 0) {
             try {
                 Set set = new HashSet();
                 Iterator iterator = element.elements().iterator();
                 // 由list类型对象获取元素的类型
                 Class<?> clazz = ReflectUtil.getClassTypeForName(entity, fieldName);
-                Object subEntity = clazz.newInstance();
                 if (iterator.hasNext()) {
                     Element subEle = (Element) iterator.next();
-                    XGRUtil subUtil = new XGRUtil(clazz);
+                    String className = getClassName(xmlField, subEle);
+                    Class clz = null;
+                    Object subEntity = null;
+                    if (StringUtils.isNotEmpty(className)) {
+                        clz = Class.forName(className);
+                        subEntity = clz.newInstance();
+                    }else {
+                        subEntity = clazz.newInstance();
+                    }
+                    XGRUtil subUtil = new XGRUtil(clz != null ? clz : clazz);
                     subUtil.getObj(subEntity, subEle);
                     set.add(subEntity);
                 }
@@ -425,7 +434,7 @@ public class XGRUtil<T> {
         }
     }
 
-    private void fillListField(String fieldName, Object entity, Element element) {
+    private void fillListField(String fieldName, Object entity, Element element, XmlField xmlField) {
         try {
             List list = new ArrayList();
             // 由list类型对象获取元素的类型  todo 不支持 List<Map<String,String>>
@@ -447,12 +456,19 @@ public class XGRUtil<T> {
                         list = Arrays.asList(element.getText().split(","));
                     }
                 }else {
-                    System.out.println(element.elements().size());
                     Iterator iterator = element.elements().iterator();
                     while (iterator.hasNext()) {
-                        Object subEntity = clazz.newInstance();
                         Element subEle = (Element) iterator.next();
-                        XGRUtil subUtil = new XGRUtil(clazz);
+                        String className = getClassName(xmlField, subEle);
+                        Class clz = null;
+                        Object subEntity = null;
+                        if (StringUtils.isNotEmpty(className)) {
+                            clz = Class.forName(className);
+                            subEntity = clz.newInstance();
+                        }else {
+                            subEntity = clazz.newInstance();
+                        }
+                        XGRUtil subUtil = new XGRUtil(clz != null ? clz : clazz);
                         subUtil.getObj(subEntity, subEle);
                         list.add(subEntity);
                     }
@@ -465,9 +481,15 @@ public class XGRUtil<T> {
         }
     }
 
-    private void fillObjectField(String fieldName, String eleId, Object entity, Element element) {
+    private void fillObjectField(String fieldName, String eleId, Object entity, Element element, XmlField xmlField) {
         try {
-            Class<?> type = entity.getClass().getDeclaredField(fieldName).getType();
+            Class<?> type = null;
+            String className = getClassName(xmlField, element);
+            if (StringUtils.isEmpty(className)) {
+                type = ReflectUtil.getDeclaredField(entity, fieldName).getType();
+            }else {
+                type = Class.forName(className);
+            }
             Object subEntity = type.newInstance();
             XGRUtil subUtil = new XGRUtil(type);
             subUtil.setUserData(this.userData);
@@ -477,6 +499,22 @@ public class XGRUtil<T> {
             e.printStackTrace();
             System.out.println("获取field失败 + " + e);
         }
+    }
+
+    private String getClassName(XmlField xmlField, Element subEle) {
+        String s = xmlField.classTypeAttribute();
+        Attribute attribute = subEle.attribute(s);
+        if (attribute != null) {
+            String value = attribute.getValue();
+            for (String s1 : xmlField.classTypeForName()) {
+                String[] split = s1.split(":");
+                if (StringUtils.isNotEmpty(value) && split.length == 2 && value.equals(split[0])) {
+                    System.out.println("ele: " + subEle.getName() + "; return: " + split[1]);
+                    return split[1];
+                }
+            }
+        }
+        return null;
     }
 
     private boolean determineCollectFiled(Class fieldType) {

@@ -23,36 +23,33 @@ public class BaseMenu implements Serializable {
     @XmlAttribute("type")
     @XmlOrder(3)
     private String type;
-    @XmlAttribute("menuText")
+    @XmlAttribute("needReport")
     @XmlOrder(4)
-    private String menuText;
-    @XmlAttribute("maxFailures")
-    @XmlOrder(5)
-    private String maxFailures;
-    @XmlAttribute("timeout")
-    @XmlOrder(6)
-    private String timeout;
+    private String needReport;
+
+
+
 
     @XmlField(value = "XBaselogUserData")
-    @XmlOrder(8)
+    @XmlOrder(1)
     private XBaselogUserData xBaselogUserData;
 
     @XmlField(value = "condition")
-    @XmlOrder(7)
+    @XmlOrder(2)
     private Condition condition;
 
     @XmlField(value = "responseHandle")
-    @XmlOrder(9)
+    @XmlOrder(3)
     private ResponseHandle responseHandle;
 
     @XmlField(value = "newVariable")
-    @XmlOrder(10)
+    @XmlOrder(4)
     private NewVariable newVariable;
     @XmlField(value = "userData")
-    @XmlOrder(12)
+    @XmlOrder(5)
     private UserData userData;
 
     @XmlField(value = "branches")
-    @XmlOrder(11)
+    @XmlOrder(6)
     private List<Branch> branches;
 }

@@ -33,6 +33,13 @@ public class IvrFlow {
 
     @XmlField("XBaselogUserData")
     private XBaselogUserData xBaselogUserData;
-    @XmlField("menus")
+    @XmlField(
+            value = "menus",
+            classTypeAttribute = "type",
+            classTypeForName = {
+                    "VoiceMenu:com.wen.xgr.domian.flow.menus.VoiceMenu",
+                    "RouteRequestMenu:com.wen.xgr.domian.flow.menus.RouteRequestMenu"
+            }
+    )
     private List<BaseMenu> baseMenuList;
 }
