@@ -8,6 +8,7 @@ import com.wen.xgr.annotation.XmlOrder;
 import com.wen.xgr.exception.XGRException;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
+import org.dom4j.dom.DOMDocumentType;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
@@ -23,21 +24,13 @@ public class XGRUtil<T> {
 
     public static final String headerAttrFieldName = "headerAttrs";
     public static final String fieldsAttrFieldName = "fieldsAttrs";
-
     private Class<T> resolverClazz;
-
     private String headLabel;
     private boolean headIsToXML;
-
     private Document doc;
-
-    private JSONObject userData;
-
     private T obj;
     private List<Object[]> convertXmlfieldList = new ArrayList<>();
-
     private List<Object[]> convertObjFieldList = new ArrayList<>();
-
     private Map<String, Object[]> attributeMap = new LinkedHashMap<>();
 
     public XGRUtil(Class<T> resolverClazz) {
@@ -47,11 +40,6 @@ public class XGRUtil<T> {
         // 解析注解
         init();
     }
-
-    public void setUserData(JSONObject userData){
-        this.userData = userData;
-    }
-
     private void init(){
         // 解析注解
         List<Field> fields = ReflectUtil.getDeclaredFields(this.resolverClazz);
@@ -79,21 +67,20 @@ public class XGRUtil<T> {
         this.headLabel = xmlHead.value();
     }
 
-
     public String convertXML(T obj) throws Exception {
         return convertXML(obj, false);
     }
 
-    private String convertXML(T obj, boolean flag) throws Exception {
+    public String convertXML(T obj, boolean isVersion) throws Exception {
         this.obj = obj;
         if (headIsToXML) {
             Element element = doc.addElement(this.headLabel);
-            getRoot(element, obj, flag);
+            getRoot(element, obj);
         }
-        return xmlPrint(doc);
+        return xmlPrint(doc, isVersion);
     }
 
-    private Element getRoot(Element element, T obj, boolean flag) throws Exception {
+    private Element getRoot(Element element, T obj) throws Exception {
         handlerAttr(element, headerAttrFieldName, obj);
         for (Object[] objects : this.convertXmlfieldList) {
             Field field = (Field) objects[0];
@@ -182,8 +169,7 @@ public class XGRUtil<T> {
             return;
         }
         XGRUtil subXGR = new XGRUtil(val.getClass());
-        subXGR.setUserData(this.userData);
-        subXGR.getRoot(element, val, true);
+        subXGR.getRoot(element, val);
     }
 
     // 判断基本类型
@@ -247,13 +233,17 @@ public class XGRUtil<T> {
         }
     }
 
-    private String xmlPrint(Document doc) {
+    private String xmlPrint(Document doc, boolean isVersion) {
         StringWriter sw = new StringWriter();
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding(StandardCharsets.UTF_8.name());
         XMLWriter xmlWriter = new XMLWriter(sw, format);
         try {
-            xmlWriter.write(doc);
+            if (isVersion) {
+                xmlWriter.write(doc);
+            }else {
+                xmlWriter.write(doc.getRootElement());
+            }
             xmlWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -492,7 +482,6 @@ public class XGRUtil<T> {
             }
             Object subEntity = type.newInstance();
             XGRUtil subUtil = new XGRUtil(type);
-            subUtil.setUserData(this.userData);
             subUtil.getObj(subEntity, element);
             ReflectUtil.reflectSetObjectValue(fieldName, subEntity, entity);
         } catch (Exception e) {
